@@ -374,6 +374,7 @@ void SpecialUp_cb(int key,int xm=0,int ym=0) {
 
 
 
+//Función que devuelve un valor random para que la bola aparezca en algun lugar.
 int randInRange(int min, int max)
 {
   return min + (int) (rand() / (double) (RAND_MAX + 1) * (max - min + 1));

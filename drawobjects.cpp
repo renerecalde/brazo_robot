@@ -9,14 +9,14 @@
 #endif
 using namespace std;
 
-extern int text_w; // tamaño de la textura de la pista
-extern int text_h; // tamaño de la textura de la pista
+extern int text_w; // tamaño de la textura del piso
+extern int text_h; // tamaño de la textura del piso
 extern bool animado;
 //==========================================
 // globales
 
 extern float aang; // orientacion
-extern float ax,ay; // posicion en la pista
+extern float ax,ay; // posicion en el piso
 extern float aacel; // acelerador (eje y del mouse)
 extern float aspeed; // velocidad actual
 extern float topspeed; // velocidad maxima
@@ -36,7 +36,7 @@ extern float distancia;
 static const double R2G=180/M_PI, DOS_PI=2*M_PI, G2R=atan(1.0)/45;
 //==========================================
 
-//=======mios
+//===Variables agregadas para este proyecto.
 
 float original=0;
 
