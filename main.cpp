@@ -24,6 +24,13 @@ float aspeed=0; // velocidad actual
 float topspeed=60; // velocidad maxima
 float rang=0; // direccion de las ruedas delanteras respecto al auto (eje x del mouse) 
 float rang2=0; // giro de las ruedas sobre su eje, cuando el auto avanza 
+float largo_brazo=2;
+float largo_antebrazo=2;
+float largo_bace=1;
+float angulo=0; //angulo bola
+float distancia=0;  //distancia bola
+float limite_inferior=1;
+float limite_superior=2; 
 
 int
   w=640,h=480, // tamaño de la ventana
@@ -47,10 +54,12 @@ bool // variables de estado de este programa
   animado=true,    // el auto se mueve por la pista
   dibuja=true,      // false si esta minimizado
   relleno=true,     // dibuja relleno o no
-  cl_info=false,     // informa por la linea de comandos
+  cl_info=true,     // informa por la linea de comandos
   top_view=false,    // vista superior o vista trasera del auto cuando animate=true
-  fog=false;
-
+  fog=false,
+  creado=false,
+  mover=false;
+   
 // tamaño de la pista sobre
 int text_w = 200; 
 int text_h = 200;
@@ -241,10 +250,15 @@ void Idle_cb() {
   }
   aang-=rang*aspeed/150;
   rang2+=aspeed;
-  
-  if (true) 
-    cout<<setprecision(3)<<fixed<<"x:"<<ax<<" y:"<<ay<<" rang:"<<rang<<" rang2:"<<rang2<<" aspeed:"<<aspeed<<"\r"<<flush;
-  
+    
+  if (true){
+     
+ //   cout<<setprecision(3)<<fixed<<"x:"<<ax<<" y:"<<ay<<" rang:"<<rang<<" rang2:"<<rang2<<" aspeed:"<<aspeed<<" Coseno -rang: "<<cos(-rang)<<" Seno -rang: "<<sin(-rang)<<"\r"<<flush;
+    
+    cout<<setprecision(3)<<fixed<<" Angulo: "<<angulo<<"\r"<<flush;
+   
+  }
+    
   glutPostRedisplay();
 }
 
@@ -358,9 +372,43 @@ void SpecialUp_cb(int key,int xm=0,int ym=0) {
   else if (key==GLUT_KEY_LEFT) keys[3]=false;
 }
 
+
+
+int randInRange(int min, int max)
+{
+  return min + (int) (rand() / (double) (RAND_MAX + 1) * (max - min + 1));
+}
+
+
 // Maneja pulsaciones del teclado (ASCII keys)
 void Keyboard_cb(unsigned char key,int x=0,int y=0) {
   switch (key){
+  case 'a': case 'A':// Agarrar la bola.
+	
+    mover=!mover;
+    if (mover) {
+      
+      
+      
+    if (cl_info) cout << ((mover)? "Mover" : "No mover") << endl;
+    
+    }
+	  break;	  
+  case 'b': case 'B': // Insertar la bola 
+    creado=!creado;
+   // if (creado) {
+      
+      angulo =randInRange(0,360);
+      
+     // glutPostRedisplay();
+      
+    if (cl_info) cout << ((creado)? "Creado: " : "No creado: ") << endl;
+    
+  //}
+	  break;	  	
+  case 'c': case 'C': // Tirar la bola
+	  
+	  break;	  	 	  
   case 'f': case 'F': // relleno
     relleno=!relleno;
     if (relleno) 
@@ -417,6 +465,19 @@ void Keyboard_cb(unsigned char key,int x=0,int y=0) {
 void Menu_cb(int value)
 {
   switch (value){
+  //Agarrar bola	  
+  case 'a':
+	  Keyboard_cb('a');
+	  return; 	
+  //Insertar bola	  
+  case 'b':
+	  Keyboard_cb('b');
+	  return; 	  
+  //Tirar la bola en la canasta	  
+  case 'c':
+	  Keyboard_cb('c');
+	  return; 	  
+	  
   case 'n':
     Keyboard_cb('n');
     return;
@@ -462,7 +523,7 @@ void initialize() {
   
   glutInitWindowSize(w,h); glutInitWindowPosition(50,50);
   
-  glutCreateWindow("Mano Robotica, Recalde Menin "); // crea el main window
+  glutCreateWindow("Brazo robot, Recalde Menin "); // crea el main window
   
   //declara los callbacks
   //los que no se usan no se declaran
@@ -476,6 +537,9 @@ void initialize() {
   
   // crea el menu
   glutCreateMenu(Menu_cb);
+  glutAddMenuEntry("   [a]_Agarrar bola          ", 'a');
+  glutAddMenuEntry("   [b]_Insertar bola         ", 'b');
+  glutAddMenuEntry("   [c]_Canasta               ", 'c');
   glutAddMenuEntry("   [f]_Caras Rellenas        ", 'f');
   glutAddMenuEntry("   [i]_Info On/Off           ", 'i');
   glutAddMenuEntry("   [p]_Perspectiva/Ortogonal ", 'p');

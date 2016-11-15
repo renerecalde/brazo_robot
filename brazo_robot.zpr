@@ -12,13 +12,16 @@ version_required=20130729
 custom_tabs=0
 tab_use_spaces=0
 explorer_path=
+current_source=main.cpp
 path_char=/
 [source]
 path=drawobjects.cpp
 cursor=0:0
+open=true
 [source]
 path=main.cpp
-cursor=0:0
+cursor=363:8
+open=true
 [other]
 path=Readme.txt
 cursor=0:0
