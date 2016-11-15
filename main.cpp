@@ -31,7 +31,7 @@ void initialize() {
 	glutInitDisplayMode (GLUT_RGBA|GLUT_DOUBLE);
 	glutInitWindowSize (640,480);
 	glutInitWindowPosition (100,100);
-	glutCreateWindow ("Ventana OpenGL");
+	glutCreateWindow ("Brazo Robot OpenGL");
 	glutDisplayFunc (display_cb);
 	glutReshapeFunc (reshape_cb);
 	glClearColor(1.f,1.f,1.f,1.f);
