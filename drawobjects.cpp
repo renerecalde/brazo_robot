@@ -33,6 +33,10 @@ extern float largo_bace;
 extern float angulo;
 extern float distancia;
 
+extern float ang_brazo;
+
+extern float ang_completo;
+
 static const double R2G=180/M_PI, DOS_PI=2*M_PI, G2R=atan(1.0)/45;
 //==========================================
 
@@ -49,7 +53,47 @@ float co=0;
 //==========================================
 // algunos objetos
 //==========================================
-
+void drawBase(bool alt_color=false){
+	if (alt_color)
+		glColor3f(.8,.3,.2);
+	else
+		
+		glPushMatrix();
+	
+	glTranslatef(1,0,0);
+	
+	glColor3f(1,0,0);
+	//Esto dibuja multiples triangulos con una invocación de GL_TRIANGLES
+	glBegin(GL_TRIANGLES);
+	//Primer triangulo
+	glNormal3f(.4,-1,0);
+	glVertex3f(-1,-1,-1);
+	glVertex3f(-1,-1,1);
+	glVertex3f(1,0,0);
+	glNormal3f(.4,1,0);
+	glVertex3f(-1,1,-1);
+	glVertex3f(-1,1,1);
+	glVertex3f(1,0,0);
+	glNormal3f(.4,0,1);
+	glVertex3f(-1,1,1);
+	glVertex3f(-1,-1,1);
+	glVertex3f(1,0,0);
+	glNormal3f(.4,0,-1);
+	glVertex3f(-1,1,-1);
+	glVertex3f(-1,-1,-1);
+	glVertex3f(1,0,0);
+	glEnd();
+	glBegin(GL_QUADS);
+	glNormal3f(-1,0,0);
+	glVertex3f(-1,-1,-1);
+	glVertex3f(-1,1,-1);
+	glVertex3f(-1,1,1);
+	glVertex3f(-1,-1,1);
+	glEnd();
+	
+	glPopMatrix();
+	
+}
 
 void drawChasis(bool alt_color=false) {
   if (alt_color)
@@ -162,7 +206,8 @@ void drawObjects() {
   else {  // inicio else animado
     
     drawPista();
-  // @@@@@ aplicar las transformaciones necesarias para ubicar las partes del auto como van
+// @@@@@ Aplicar las transformaciones necesarias para ubicar las partes del 
+//       brazo como van.
   
         
   if(contt==0)  {
@@ -182,8 +227,15 @@ void drawObjects() {
   
   //float rang=rang*(M_PI/180);
    
-  float ca=cos(-rang);
-  float co=sin(-rang);
+///  float ca=cos(-rang);
+///  float co=sin(-rang);
+  
+  
+  float ca=cos(-ang_brazo);
+  float co=sin(-ang_brazo);
+  
+  
+  
     
   glPushMatrix(); // rota todo inicio
   
@@ -204,6 +256,11 @@ void drawObjects() {
       glPopMatrix();
   
       
+	  glPushMatrix();  ///
+ 
+	  glRotatef(ang_completo,0,1,0);  ///
+	  
+	  
       //     Ante braso
       
       
@@ -211,9 +268,11 @@ void drawObjects() {
       
       
          glTranslatef(0.0,0.0,1.0);
-         glRotatef(-rang,0,1,0);
+         //glRotatef(-rang,0,1,0);
        //  glRotatef(angulo,0,0,1);
-         glScalef(1.0,0.3,0.1);
+		 glRotatef( -ang_brazo,0,1,0);
+		 
+		 glScalef(1.0,0.3,0.1);
          drawChasis(false);
       
       glPopMatrix();
@@ -224,11 +283,14 @@ void drawObjects() {
       
          glTranslatef(1.0,0.0,1.0);
          glTranslatef(ca,0.0,co);
-         glRotatef(rang,0,1,0);
+         //glRotatef(rang,0,1,0);
+		 glRotatef((ang_brazo),0,1,0);
          glScalef(1.0,0.3,0.1);
          drawChasis(false);
       
       glPopMatrix();
+	  glPopMatrix(); ///Esto que hace?
+	  
       
          
 glPopMatrix(); //rota todo 
@@ -237,7 +299,7 @@ glPopMatrix(); //rota todo
   glPushMatrix();
       
       glRotatef(angulo,0,0,1);
-      glTranslatef(1.0,0.0,0.0);
+      glTranslatef(distancia,0.0,0.0);
       glScalef(0.1,0.1,0.1);
       drawCasco(lod);
   glPopMatrix();

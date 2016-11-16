@@ -16,11 +16,11 @@ current_source=drawobjects.cpp
 path_char=/
 [source]
 path=drawobjects.cpp
-cursor=38:44
+cursor=65:0
 open=true
 [source]
 path=main.cpp
-cursor=376:80
+cursor=380:74
 open=true
 [other]
 path=Readme.txt

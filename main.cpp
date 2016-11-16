@@ -28,9 +28,13 @@ float largo_brazo=2;
 float largo_antebrazo=2;
 float largo_bace=1;
 float angulo=0; //angulo bola
-float distancia=0;  //distancia bola
+float distancia=1;  //distancia bola
 float limite_inferior=1;
-float limite_superior=2; 
+float limite_superior=2;
+float ang_brazo=0;
+float apertura=0;
+float ang_completo=0;
+
 
 int
   w=640,h=480, // tamaño de la ventana
@@ -255,7 +259,7 @@ void Idle_cb() {
      
  //   cout<<setprecision(3)<<fixed<<"x:"<<ax<<" y:"<<ay<<" rang:"<<rang<<" rang2:"<<rang2<<" aspeed:"<<aspeed<<" Coseno -rang: "<<cos(-rang)<<" Seno -rang: "<<sin(-rang)<<"\r"<<flush;
     
-    cout<<setprecision(3)<<fixed<<" Angulo: "<<angulo<<"\r"<<flush;
+   // cout<<setprecision(3)<<fixed<<" Angulo: "<<angulo<<"\r"<<flush;
    
   }
     
@@ -389,7 +393,102 @@ void Keyboard_cb(unsigned char key,int x=0,int y=0) {
     mover=!mover;
     if (mover) {
       
-      
+		 apertura = sqrt(1+distancia);
+		
+		 ang_brazo = acos((((largo_brazo * largo_brazo) - (largo_antebrazo * largo_antebrazo) + (apertura * apertura)) / (2 * largo_antebrazo * apertura ) )); 
+		
+		// ang_brazo = 
+		 
+		 
+		 ang_completo=1/ (sin(distancia/apertura));
+		 
+		 int diferencia= aang - angulo;
+		 
+		 float avance_ang_completo =ang_completo /diferencia;
+		 
+		 float avance_ang_brazo =ang_completo /diferencia;
+		 
+		 
+		// ang_brazo=50;
+		 
+		//rang=ang_brazo;
+		
+	//	ang_completo
+			
+			
+		
+		if(aang < angulo) {
+			
+			
+			int inicio=aang;
+		
+						
+			
+			
+			for( int aa=inicio ;aa<=angulo   ;aa++  ) {
+							
+			//	static int anterior=glutGet(GLUT_ELAPSED_TIME); 
+				
+				
+				aang++;
+				regen();
+				glutPostRedisplay();
+						
+				cout<<" paso "<<flush;
+				
+				/*
+				
+				if (msecs!=1){ // esperar msec antes de pasar al próximo cuadro, si msecs es 1 no pierdo tiempo
+					int tiempo=glutGet(GLUT_ELAPSED_TIME), lapso=tiempo-anterior;
+					if (lapso<msecs) return;
+					
+					suma+=lapso;
+					if (++counter==100) {
+						//      cout << "<ms/frame>= " << suma/100.0 << endl;
+						counter=suma=0;
+					}
+					anterior=tiempo;
+				}
+				
+				*/
+				
+			}
+			
+		}else {
+			///////////////
+			
+			int inicio=aang;
+			
+			for( int aa=inicio ;aa>=angulo   ;aa--) {
+				
+				//static int anterior=glutGet(GLUT_ELAPSED_TIME); 
+				
+				aang--;
+			
+			    regen();
+				glutPostRedisplay();
+	
+				/*
+				
+				if (msecs!=1){ // esperar msec antes de pasar al próximo cuadro, si msecs es 1 no pierdo tiempo
+					int tiempo=glutGet(GLUT_ELAPSED_TIME), lapso=tiempo-anterior;
+					if (lapso<msecs) return;
+					
+					suma+=lapso;
+					if (++counter==100) {
+						//      cout << "<ms/frame>= " << suma/100.0 << endl;
+						counter=suma=0;
+					}
+				    anterior=tiempo;
+				}
+				
+				*/
+				
+			}
+			
+			//////////////
+		}
+		
       
     if (cl_info) cout << ((mover)? "Mover" : "No mover") << endl;
     
@@ -400,6 +499,8 @@ void Keyboard_cb(unsigned char key,int x=0,int y=0) {
    // if (creado) {
       
       angulo =randInRange(0,360);
+
+	  distancia=1+randInRange(0,10)/10;
       
      // glutPostRedisplay();
       
