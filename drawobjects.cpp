@@ -26,9 +26,13 @@ extern float rang2; // giro de las ruedas sobre su eje, cuando el auto avanza
 extern float lpos[]; // posición de la luz
 extern int lod; // nivel de detalle para los graficos
 
+//Medida de los componentes
 extern float largo_brazo;
 extern float largo_antebrazo;
-extern float largo_bace;
+
+extern float ancho_base; //eje z
+extern float largo_base; //eje y
+extern float alto_base; //eje x
 
 extern float angulo;
 extern float distancia;
@@ -53,47 +57,91 @@ float co=0;
 //==========================================
 // algunos objetos
 //==========================================
+
+//Base del brazo robot.
 void drawBase(bool alt_color=false){
 	if (alt_color)
 		glColor3f(.8,.3,.2);
 	else
 		
 		glPushMatrix();
-	
-	glTranslatef(1,0,0);
-	
-	glColor3f(1,0,0);
-	//Esto dibuja multiples triangulos con una invocación de GL_TRIANGLES
-	glBegin(GL_TRIANGLES);
-	//Primer triangulo
-	glNormal3f(.4,-1,0);
-	glVertex3f(-1,-1,-1);
-	glVertex3f(-1,-1,1);
-	glVertex3f(1,0,0);
-	glNormal3f(.4,1,0);
-	glVertex3f(-1,1,-1);
-	glVertex3f(-1,1,1);
-	glVertex3f(1,0,0);
-	glNormal3f(.4,0,1);
-	glVertex3f(-1,1,1);
-	glVertex3f(-1,-1,1);
-	glVertex3f(1,0,0);
-	glNormal3f(.4,0,-1);
-	glVertex3f(-1,1,-1);
-	glVertex3f(-1,-1,-1);
-	glVertex3f(1,0,0);
-	glEnd();
-	glBegin(GL_QUADS);
-	glNormal3f(-1,0,0);
-	glVertex3f(-1,-1,-1);
-	glVertex3f(-1,1,-1);
-	glVertex3f(-1,1,1);
-	glVertex3f(-1,-1,1);
-	glEnd();
-	
-	glPopMatrix();
+			
+			glTranslatef(1,0,0);
+			
+			glColor3f(0.75,0.75,0.75);//defino la base en un color gris claro.
+			//Esto dibuja multiples triangulos con una invocación de GL_TRIANGLES
+			glBegin(GL_TRIANGLES);
+			//Primer triangulo
+			glNormal3f(.4,-1,0);
+			glVertex3f(-1,-1,-1);
+			glVertex3f(-1,-1,1);
+			glVertex3f(1,0,0);
+			glNormal3f(.4,1,0);
+			glVertex3f(-1,1,-1);
+			glVertex3f(-1,1,1);
+			glVertex3f(1,0,0);
+			glNormal3f(.4,0,1);
+			glVertex3f(-1,1,1);
+			glVertex3f(-1,-1,1);
+			glVertex3f(1,0,0);
+			glNormal3f(.4,0,-1);
+			glVertex3f(-1,1,-1);
+			glVertex3f(-1,-1,-1);
+			glVertex3f(1,0,0);
+			glEnd();
+			glBegin(GL_QUADS);//Esto dibuja la base de la piramide.
+			glNormal3f(-1,0,0);
+			glVertex3f(-1,-1,-1);
+			glVertex3f(-1,1,-1);
+			glVertex3f(-1,1,1);
+			glVertex3f(-1,-1,1);
+			glEnd();	
+		glPopMatrix();
 	
 }
+
+void drawAnteBrazo(bool alt_color=false) {
+	if (alt_color)
+		glColor3f(.8,.3,.2);
+	else
+			
+		glPushMatrix();
+		
+			glTranslatef(1,0,0);
+			
+			glColor3f(0.75,0.75,0.75);
+			
+			glBegin(GL_QUAD_STRIP);//La envoltura
+			//como hice con strip voy a tener un problema
+			//con las normales mas adelante. En ela cuestion de la iluminación
+			glNormal3f(0,1,0);//n1
+			//Esto define la normal al vertice/s. Es decir 
+			//la normal a la superficie formada por los vertices siguientes. 
+			//Sirve para la iluminación. Y es importante definir.
+			glVertex3f(1,1,-1);//v5
+			glVertex3f(-1,1,-1);//v2
+			glVertex3f(1,1,1);//v6
+			glNormal3f(0,0,1);//n2
+			glVertex3f(-1,1,1);//v3
+			glVertex3f(1,-1,1);//v7
+			glVertex3f(-1,-1,1);//v4
+			glNormal3f(0,1,0);//n3
+			glVertex3f(1,-1,-1);//v8
+			glVertex3f(-1,-1,-1);//v1
+			glEnd();
+			glBegin(GL_QUADS);//La tapa de abajo
+			glNormal3f(-1,0,0);
+			glVertex3f(-1,-1,-1);//v1
+			glVertex3f(-1,1,-1);//v2
+			glVertex3f(-1,1,1);//v3
+			glVertex3f(-1,-1,1);//v4
+			glEnd();
+		
+		glPopMatrix();
+		
+	
+}
+
 
 void drawChasis(bool alt_color=false) {
   if (alt_color)
@@ -227,8 +275,8 @@ void drawObjects() {
   
   //float rang=rang*(M_PI/180);
    
-///  float ca=cos(-rang);
-///  float co=sin(-rang);
+//  float ca=cos(-rang);
+//  float co=sin(-rang);
   
   
   float ca=cos(-ang_brazo);
@@ -244,68 +292,62 @@ void drawObjects() {
       glRotatef(aang,0,0,1);
       glRotatef(2,0,1,0);
   
-      //     Base
+    //     Base
+	// La base es una pirame de 0.3x0.3x0.3
+    glPushMatrix();
+  		glTranslatef(0.0,0.0,0.0);//la traslado al inicio de coordenadas.
+        glRotatef(-90,0,1,0);//roto para que la punta quede para arriba. Me
+		//parece que y apunta hacia el observador.
+		//x apunta hacia arriba. Y z hacia la derecha
+        glScalef(alto_base,largo_base,ancho_base);
+        drawBase(false);
   
-      glPushMatrix();
+    glPopMatrix();
   
-         glTranslatef(0.0,0.0,1.0);
-         glRotatef(90,0,1,0);
-         glScalef(1.0,0.3,0.1);
-         drawChasis(false);
-  
-      glPopMatrix();
-  
-      
-	  glPushMatrix();  ///
- 
-	  glRotatef(ang_completo,0,1,0);  ///
+    //Qué hace acá?  
+	glPushMatrix();  ///
+ 	glRotatef(ang_completo,0,1,0);  ///
 	  
 	  
-      //     Ante braso
+	//     Ante braso
       
       
-      glPushMatrix();
+    glPushMatrix();
+        glTranslatef(0.0,0.0,1.0);
+        //glRotatef(-rang,0,1,0);
+        //glRotatef(angulo,0,0,1);
+		glRotatef( -ang_brazo,0,1,0);
+		glScalef(1.0,0.3,0.1);
+        drawAnteBrazo(false);
+      
+	glPopMatrix();
       
       
-         glTranslatef(0.0,0.0,1.0);
-         //glRotatef(-rang,0,1,0);
-       //  glRotatef(angulo,0,0,1);
-		 glRotatef( -ang_brazo,0,1,0);
-		 
-		 glScalef(1.0,0.3,0.1);
-         drawChasis(false);
-      
-      glPopMatrix();
-      
-      
-      // Braso
-      glPushMatrix();
-      
-         glTranslatef(1.0,0.0,1.0);
-         glTranslatef(ca,0.0,co);
-         //glRotatef(rang,0,1,0);
-		 glRotatef(ang_brazo,0,1,0);
-         glScalef(1.0,0.3,0.1);
-         drawChasis(false);
-      
-      glPopMatrix();
+    // Brazo
+    glPushMatrix();
+        glTranslatef(1.0,0.0,1.0);
+        glTranslatef(ca,0.0,co);
+        //glRotatef(rang,0,1,0);
+		glRotatef(ang_brazo,0,1,0);
+        glScalef(1.0,0.3,0.1);
+        drawChasis(false);
+    glPopMatrix();
 	 
 	  
-	  glPopMatrix(); ///Esto que hace? si se hace 
+	glPopMatrix(); ///Esto que hace? si se hace 
 	  
       
          
-glPopMatrix(); //rota todo 
+glPopMatrix(); //rota todo fin
   
-  //bola
-  glPushMatrix();
-      
+    //bola
+	glPushMatrix();
       glRotatef(angulo,0,0,1);
 	  glTranslatef(0.0,0.5,0.0);
       glTranslatef(distancia,0.0,0.0);
       glScalef(0.1,0.1,0.1);
       drawCasco(lod);
-  glPopMatrix();
+	glPopMatrix();
   
   
   

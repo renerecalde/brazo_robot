@@ -26,7 +26,10 @@ float rang=0; // direccion de las ruedas delanteras respecto al auto (eje x del 
 float rang2=0; // giro de las ruedas sobre su eje, cuando el auto avanza 
 float largo_brazo=2;
 float largo_antebrazo=2;
-float largo_bace=1;
+//Medidas de la base
+float largo_base=0.3;//eje y
+float ancho_base=0.3;//eje z
+float alto_base=0.3;//eje x
 float angulo=0; //angulo bola
 float distancia=1;  //distancia bola
 float limite_inferior=1;
@@ -402,6 +405,7 @@ void SpecialUp_cb(int key,int xm=0,int ym=0) {
 
 
 //Función que devuelve un valor random para que la bola aparezca en algun lugar.
+//A esta función podriamos ponerla en otra clase que contenga todos los cálculos
 int randInRange(int min, int max)
 {
   return min + (int) (rand() / (double) (RAND_MAX + 1) * (max - min + 1));
