@@ -284,12 +284,14 @@ void drawObjects() {
          glTranslatef(1.0,0.0,1.0);
          glTranslatef(ca,0.0,co);
          //glRotatef(rang,0,1,0);
-		 glRotatef((ang_brazo),0,1,0);
+		 glRotatef(ang_brazo,0,1,0);
          glScalef(1.0,0.3,0.1);
          drawChasis(false);
       
       glPopMatrix();
-	  glPopMatrix(); ///Esto que hace?
+	 
+	  
+	  glPopMatrix(); ///Esto que hace? si se hace 
 	  
       
          
@@ -299,6 +301,7 @@ glPopMatrix(); //rota todo
   glPushMatrix();
       
       glRotatef(angulo,0,0,1);
+	  glTranslatef(0.0,0.5,0.0);
       glTranslatef(distancia,0.0,0.0);
       glScalef(0.1,0.1,0.1);
       drawCasco(lod);

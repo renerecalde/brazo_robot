@@ -34,6 +34,10 @@ float limite_superior=2;
 float ang_brazo=0;
 float apertura=0;
 float ang_completo=0;
+float ang_brazo_final = 0; 
+float ang_completo_final=0; 
+float avance_ang_completo = 0; 
+float avance_ang_brazo = 0; 
 
 
 int
@@ -70,12 +74,15 @@ int text_h = 200;
 int suma=100;
 
 int counter=0;
+int diferencia= 0; 
+
 
 short modifiers=0;  // ctrl, alt, shift (de GLUT)
 inline short get_modifiers() {return modifiers=(short)glutGetModifiers();}
 
 // temporizador:
-static int msecs=50; // milisegundos por frame
+static const int ms_lista[]={1,2,5,10,20,50,100,200,500,1000,2000,5000},ms_n=12;
+static int ms_i=4,msecs=ms_lista[ms_i]; // milisegundos por frame
 
 
 //!!!!!!!!!!!!!
@@ -212,9 +219,9 @@ void regen() {
 // El "framerate" lo determina msec, a menos que la complejidad 
 // del modelo (lod) y la no aceleracion por hardware lo bajen
 void Idle_cb() {
-  static int anterior=glutGet(GLUT_ELAPSED_TIME); // milisegundos desde que arranco
+  //static int anterior=glutGet(GLUT_ELAPSED_TIME); // milisegundos desde que arranco
   
-  if (msecs!=1){ // esperar msec antes de pasar al próximo cuadro, si msecs es 1 no pierdo tiempo
+  /*if (msecs!=1){ // esperar msec antes de pasar al próximo cuadro, si msecs es 1 no pierdo tiempo
     int tiempo=glutGet(GLUT_ELAPSED_TIME), lapso=tiempo-anterior;
     if (lapso<msecs) return;
     
@@ -227,7 +234,7 @@ void Idle_cb() {
     
     
     anterior=tiempo;
-  }
+  } */
   
   // aplicar los controles
   if (keys[2]!=keys[3])
@@ -358,6 +365,22 @@ void Mouse_cb(int button, int state, int x, int y){
 // Special keys (non-ASCII)
 // aca es int key
 void Special_cb(int key,int xm=0,int ym=0) {
+	
+	
+	if (key==GLUT_KEY_PAGE_UP||key==GLUT_KEY_PAGE_DOWN){ // velocidad
+		if (key==GLUT_KEY_PAGE_DOWN) ms_i++;
+		else ms_i--;
+		if (ms_i<0) ms_i=0; if (ms_i==ms_n) ms_i--;
+		msecs=ms_lista[ms_i];
+		if (cl_info){
+			if (msecs<1000)
+				cout << 1000/msecs << "fps" << endl;
+			else
+				cout << msecs/1000 << "s/frame)" << endl;
+		}
+	}
+	
+	
   if (key==GLUT_KEY_F4){ // alt+f4 => exit
     get_modifiers();
     if (modifiers==GLUT_ACTIVE_ALT)
@@ -390,51 +413,55 @@ void Keyboard_cb(unsigned char key,int x=0,int y=0) {
   switch (key){
   case 'a': case 'A':// Agarrar la bola.
 	
-    mover=!mover;
+    //mover=!mover;
     if (mover) {
       
 		 apertura = sqrt(1+distancia);
 		
-		 ang_brazo = acos((((largo_brazo * largo_brazo) - (largo_antebrazo * largo_antebrazo) + (apertura * apertura)) / (2 * largo_antebrazo * apertura ) )); 
+		 ang_brazo_final = acos((((largo_brazo * largo_brazo) - (largo_antebrazo * largo_antebrazo) + (apertura * apertura)) / (2 * largo_antebrazo * apertura ) )); 
 		
-		// ang_brazo = 
+		 ang_completo_final=1/ (sin(distancia/apertura));
+		 
+		 diferencia= aang - angulo;
+		 
+		 diferencia= sqrt(diferencia * diferencia);
 		 
 		 
-		 ang_completo=1/ (sin(distancia/apertura));
+		 avance_ang_completo =(ang_completo_final - ang_completo) /diferencia;
 		 
-		 int diferencia= aang - angulo;
-		 
-		 float avance_ang_completo =ang_completo /diferencia;
-		 
-		 float avance_ang_brazo =ang_completo /diferencia;
+		 avance_ang_brazo =(ang_brazo_final - ang_brazo) /diferencia;
 		 
 		 
-		// ang_brazo=50;
-		 
-		//rang=ang_brazo;
-		
-	//	ang_completo
-			
-			
 		
 		if(aang < angulo) {
 			
 			
 			int inicio=aang;
 		
-						
+		//	static int anterior=glutGet(GLUT_ELAPSED_TIME); 
 			
 			
 			for( int aa=inicio ;aa<=angulo   ;aa++  ) {
 							
-			//	static int anterior=glutGet(GLUT_ELAPSED_TIME); 
-				
-				
 				aang++;
+				ang_brazo+=avance_ang_brazo;
+				ang_completo+=avance_ang_completo;
+				
 				regen();
 				glutPostRedisplay();
 						
 				cout<<" paso "<<flush;
+				
+				
+			//	for( int aaa=0 ;aaa<=100 ;aaa++  ) {
+					
+				//	for( int bbb=0 ;bbb<=100 ;bbb++  ) {
+						
+		//			}
+				
+				
+			//	}
+				
 				
 				/*
 				
@@ -459,17 +486,35 @@ void Keyboard_cb(unsigned char key,int x=0,int y=0) {
 			
 			int inicio=aang;
 			
+			//static int anterior=glutGet(GLUT_ELAPSED_TIME); 
 			for( int aa=inicio ;aa>=angulo   ;aa--) {
 				
-				//static int anterior=glutGet(GLUT_ELAPSED_TIME); 
+			
 				
 				aang--;
-			
-			    regen();
-				glutPostRedisplay();
-	
-				/*
 				
+				ang_brazo+=avance_ang_brazo;
+				ang_completo+=avance_ang_completo;
+				
+				regen();
+				glutPostRedisplay();
+				
+				cout<<" paso "<<flush;
+	
+				
+			//	for( int aaa=0 ;aaa<=100 ;aaa++  ) {
+					
+				//	for( int bbb=0 ;bbb<=100 ;bbb++  ) {
+						
+			//		}
+					
+					
+				//}
+				
+				
+				
+				
+				/*
 				if (msecs!=1){ // esperar msec antes de pasar al próximo cuadro, si msecs es 1 no pierdo tiempo
 					int tiempo=glutGet(GLUT_ELAPSED_TIME), lapso=tiempo-anterior;
 					if (lapso<msecs) return;
@@ -490,12 +535,12 @@ void Keyboard_cb(unsigned char key,int x=0,int y=0) {
 		}
 		
       
-    if (cl_info) cout << ((mover)? "Mover" : "No mover") << endl;
+    if (true) cout << ((mover)? "Bola colocada" : "Bola no colocada") << endl;
     
     }
 	  break;	  
   case 'b': case 'B': // Insertar la bola 
-    creado=!creado;
+  //  creado=!creado;
    // if (creado) {
       
       angulo =randInRange(0,360);
@@ -504,7 +549,7 @@ void Keyboard_cb(unsigned char key,int x=0,int y=0) {
       
      // glutPostRedisplay();
       
-    if (cl_info) cout << ((creado)? "Creado: " : "No creado: ") << endl;
+    if (true) cout << ((creado)? "Creado: " : "No creado: ") << endl;
     
   //}
 	  break;	  	
