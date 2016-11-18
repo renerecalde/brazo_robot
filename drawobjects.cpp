@@ -41,6 +41,7 @@ extern float ang_brazo;
 
 extern float ang_completo;
 
+extern float ang_brazo_segundo;
 static const double R2G=180/M_PI, DOS_PI=2*M_PI, G2R=atan(1.0)/45;
 //==========================================
 
@@ -244,14 +245,15 @@ void drawPista() {
 }
 
 void drawObjects() {
-  if (!animado) 
-  {
-    drawCube(); 
+  //if (!animado) 
+  //{
+    //drawCube(); 
+	//int v=0;
 
-  }
+  //}
     
     
-  else {  // inicio else animado
+ // else {  // inicio else animado
     
     drawPista();
 // @@@@@ Aplicar las transformaciones necesarias para ubicar las partes del 
@@ -289,46 +291,47 @@ void drawObjects() {
   
       glTranslatef(0.0,0.0,0.165);
    //   glTranslatef(ax,ay,0.0);
-      glRotatef(aang,0,0,1);
+      glRotatef(-aang,0,0,1);
       glRotatef(2,0,1,0);
   
     //     Base
 	// La base es una pirame de 0.3x0.3x0.3
     glPushMatrix();
-  		glTranslatef(0.0,0.0,0.0);//la traslado al inicio de coordenadas.
-        glRotatef(-90,0,1,0);//roto para que la punta quede para arriba. Me
+  		//glTranslatef(0.0,0.0,0.0);//la traslado al inicio de coordenadas.
+        //glRotatef(-90,0,1,0);//roto para que la punta quede para arriba. Me
 		//parece que y apunta hacia el observador.
 		//x apunta hacia arriba. Y z hacia la derecha
-        glScalef(alto_base,largo_base,ancho_base);
-        drawBase(false);
-  
+        //glScalef(alto_base,largo_base,ancho_base);
+       // drawBase(false);
+	glTranslatef(0.0,0.0,1.0);
+	glRotatef(90,0,1,0);
+	glScalef(1.0,0.3,0.1);
+	
+		drawChasis(false);
     glPopMatrix();
   
-    //Qué hace acá?  
+    //Qué hace acá?  si desde aca
 	glPushMatrix();  ///
- 	glRotatef(ang_completo,0,1,0);  ///
+ 	glRotatef(-ang_completo,0,1,0);  ///
+	//glRotatef(-100,0,1,0);
 	  
-	  
-	//     Ante braso
+	//  Brazo
       
       
     glPushMatrix();
         glTranslatef(0.0,0.0,1.0);
-        //glRotatef(-rang,0,1,0);
-        //glRotatef(angulo,0,0,1);
-		glRotatef( -ang_brazo,0,1,0);
+       	glRotatef(ang_brazo,0,1,0);
 		glScalef(1.0,0.3,0.1);
-        drawAnteBrazo(false);
-      
+        //drawAnteBrazo(false);
+		drawChasis(false);
 	glPopMatrix();
       
       
-    // Brazo
+    // Ante Brazo
     glPushMatrix();
         glTranslatef(1.0,0.0,1.0);
         glTranslatef(ca,0.0,co);
-        //glRotatef(rang,0,1,0);
-		glRotatef(ang_brazo,0,1,0);
+        glRotatef(ang_brazo_segundo,0,1,0);
         glScalef(1.0,0.3,0.1);
         drawChasis(false);
     glPopMatrix();
@@ -342,9 +345,9 @@ glPopMatrix(); //rota todo fin
   
     //bola
 	glPushMatrix();
-      glRotatef(angulo,0,0,1);
+	  glRotatef(angulo,0,0,1);
 	  glTranslatef(0.0,0.5,0.0);
-      glTranslatef(distancia,0.0,0.0);
+	  // glTranslatef(distancia,0.0,0.0);
       glScalef(0.1,0.1,0.1);
       drawCasco(lod);
 	glPopMatrix();
@@ -353,8 +356,8 @@ glPopMatrix(); //rota todo fin
   
   
      
-  if (!animado) drawPlanito(); // referencia de suelo para cuando no esta la pista
+ // if (!animado) drawPlanito(); // referencia de suelo para cuando no esta la pista
   
-  } // fin else animado 
+ // } // fin else animado 
   
 }

@@ -41,6 +41,9 @@ float ang_brazo_final = 0;
 float ang_completo_final=0; 
 float avance_ang_completo = 0; 
 float avance_ang_brazo = 0; 
+float ang_brazo_segundo=0;
+float ang_brazo_segundo_final=0;
+float avance_ang_brazo_segundo=0;
 
 
 int
@@ -85,8 +88,8 @@ inline short get_modifiers() {return modifiers=(short)glutGetModifiers();}
 
 // temporizador:
 static const int ms_lista[]={1,2,5,10,20,50,100,200,500,1000,2000,5000},ms_n=12;
-static int ms_i=4,msecs=ms_lista[ms_i]; // milisegundos por frame
-
+static int ms_i=8,msecs=ms_lista[ms_i]; // milisegundos por frame
+//valor inicial ms_i era 4
 
 //!!!!!!!!!!!!!
 
@@ -140,7 +143,7 @@ void Display_cb() { // Este tiene que estar
     if (top_view) 
    //   gluLookAt(ax,ay,15,ax,ay,0,0,1,0);
     
-    gluLookAt(0,2,2,0,0,0,0,1,0);
+    gluLookAt(0,8,8,0,0,0,0,1,0);
   
       
     else {
@@ -152,7 +155,7 @@ void Display_cb() { // Este tiene que estar
       ////
   //   gluLookAt(ax-dist_cam*cos(-aang*M_PI/180),ay-dist_cam*sin(-aang*M_PI/180),2,ax,ay,0,0,0,1);
    
-      gluLookAt(0,3,2,0,0,0,0,0,1);
+      gluLookAt(0,8,4,0,0,0,0,0,1);
       
    }
   } else {
@@ -222,9 +225,9 @@ void regen() {
 // El "framerate" lo determina msec, a menos que la complejidad 
 // del modelo (lod) y la no aceleracion por hardware lo bajen
 void Idle_cb() {
-  //static int anterior=glutGet(GLUT_ELAPSED_TIME); // milisegundos desde que arranco
+  static int anterior=glutGet(GLUT_ELAPSED_TIME); // milisegundos desde que arranco
   
-  /*if (msecs!=1){ // esperar msec antes de pasar al próximo cuadro, si msecs es 1 no pierdo tiempo
+  if (msecs!=1){ // esperar msec antes de pasar al próximo cuadro, si msecs es 1 no pierdo tiempo
     int tiempo=glutGet(GLUT_ELAPSED_TIME), lapso=tiempo-anterior;
     if (lapso<msecs) return;
     
@@ -237,7 +240,7 @@ void Idle_cb() {
     
     
     anterior=tiempo;
-  } */
+  } 
   
   // aplicar los controles
   if (keys[2]!=keys[3])
@@ -273,6 +276,10 @@ void Idle_cb() {
    
   }
     
+  Display_cb(); // redibuja
+  
+ // cout<<" pasonnnnnnnnn "<<flush;
+  
   glutPostRedisplay();
 }
 
@@ -406,6 +413,7 @@ void SpecialUp_cb(int key,int xm=0,int ym=0) {
 
 //Función que devuelve un valor random para que la bola aparezca en algun lugar.
 //A esta función podriamos ponerla en otra clase que contenga todos los cálculos
+//te da un valor, al azar, entre un minimo y un maximo
 int randInRange(int min, int max)
 {
   return min + (int) (rand() / (double) (RAND_MAX + 1) * (max - min + 1));
@@ -416,15 +424,18 @@ int randInRange(int min, int max)
 void Keyboard_cb(unsigned char key,int x=0,int y=0) {
   switch (key){
   case 'a': case 'A':// Agarrar la bola.
-	
+	//animado=!animado;
     //mover=!mover;
-    if (mover) {
+    if (true) {
       
-		 apertura = sqrt(1+distancia);
+		 apertura = sqrt(1+distancia*distancia);
 		
-		 ang_brazo_final = acos((((largo_brazo * largo_brazo) - (largo_antebrazo * largo_antebrazo) + (apertura * apertura)) / (2 * largo_antebrazo * apertura ) )); 
+		 ang_brazo_final = (acos((((largo_brazo * largo_brazo) - (largo_antebrazo * largo_antebrazo) + (apertura * apertura)) / (2 * largo_brazo * apertura ) )))/(M_PI/180); 
 		
-		 ang_completo_final=1/ (sin(distancia/apertura));
+		 ang_completo_final= asin(distancia/apertura)/(M_PI/180);
+		 
+		 ang_brazo_segundo_final=(180-90-ang_brazo);
+		 
 		 
 		 diferencia= aang - angulo;
 		 
@@ -435,6 +446,10 @@ void Keyboard_cb(unsigned char key,int x=0,int y=0) {
 		 
 		 avance_ang_brazo =(ang_brazo_final - ang_brazo) /diferencia;
 		 
+		 avance_ang_brazo_segundo=(ang_brazo_segundo_final-ang_brazo_segundo)/diferencia;
+		 
+		 
+		 cout<<setprecision(3)<<fixed<<"distancia:"<<distancia<<" ang_brazo_final:"<<ang_brazo_final<<" apertura:"<<apertura<<" ang_completo_final:"<<ang_completo_final<<"\l"<<flush;
 		 
 		
 		if(aang < angulo) {
@@ -442,29 +457,29 @@ void Keyboard_cb(unsigned char key,int x=0,int y=0) {
 			
 			int inicio=aang;
 		
-		//	static int anterior=glutGet(GLUT_ELAPSED_TIME); 
-			
+		
 			
 			for( int aa=inicio ;aa<=angulo   ;aa++  ) {
 							
 				aang++;
 				ang_brazo+=avance_ang_brazo;
 				ang_completo+=avance_ang_completo;
+				ang_brazo_segundo+=avance_ang_brazo_segundo;
 				
 				regen();
 				glutPostRedisplay();
 						
-				cout<<" paso "<<flush;
+				//cout<<" paso "<<flush;
 				
 				
-			//	for( int aaa=0 ;aaa<=100 ;aaa++  ) {
+				for( int aaa=0 ;aaa<=100 ;aaa++  ) {
 					
-				//	for( int bbb=0 ;bbb<=100 ;bbb++  ) {
+					for( int bbb=0 ;bbb<=100 ;bbb++  ) {
 						
-		//			}
+					}
 				
 				
-			//	}
+				}
 				
 				
 				/*
@@ -490,7 +505,7 @@ void Keyboard_cb(unsigned char key,int x=0,int y=0) {
 			
 			int inicio=aang;
 			
-			//static int anterior=glutGet(GLUT_ELAPSED_TIME); 
+			
 			for( int aa=inicio ;aa>=angulo   ;aa--) {
 				
 			
@@ -499,39 +514,26 @@ void Keyboard_cb(unsigned char key,int x=0,int y=0) {
 				
 				ang_brazo+=avance_ang_brazo;
 				ang_completo+=avance_ang_completo;
-				
+				ang_brazo_segundo+=avance_ang_brazo_segundo;
 				regen();
 				glutPostRedisplay();
 				
-				cout<<" paso "<<flush;
+				//cout<<" paso "<<flush;
 	
 				
-			//	for( int aaa=0 ;aaa<=100 ;aaa++  ) {
+				for( int aaa=0 ;aaa<=100 ;aaa++  ) {
 					
-				//	for( int bbb=0 ;bbb<=100 ;bbb++  ) {
+					for( int bbb=0 ;bbb<=100 ;bbb++  ) {
 						
-			//		}
-					
-					
-				//}
-				
-				
-				
-				
-				/*
-				if (msecs!=1){ // esperar msec antes de pasar al próximo cuadro, si msecs es 1 no pierdo tiempo
-					int tiempo=glutGet(GLUT_ELAPSED_TIME), lapso=tiempo-anterior;
-					if (lapso<msecs) return;
-					
-					suma+=lapso;
-					if (++counter==100) {
-						//      cout << "<ms/frame>= " << suma/100.0 << endl;
-						counter=suma=0;
 					}
-				    anterior=tiempo;
+					
+					
 				}
 				
-				*/
+				
+				
+				
+				
 				
 			}
 			
@@ -539,23 +541,22 @@ void Keyboard_cb(unsigned char key,int x=0,int y=0) {
 		}
 		
       
-    if (true) cout << ((mover)? "Bola colocada" : "Bola no colocada") << endl;
+    
     
     }
+  
 	  break;	  
   case 'b': case 'B': // Insertar la bola 
-  //  creado=!creado;
-   // if (creado) {
+    
       
       angulo =randInRange(0,360);
 
-	  distancia=1+randInRange(0,10)/10;
+	  distancia=1+randInRange(0,20)/10;
       
-     // glutPostRedisplay();
-      
+         
     if (true) cout << ((creado)? "Creado: " : "No creado: ") << endl;
     
-  //}
+  
 	  break;	  	
   case 'c': case 'C': // Tirar la bola
 	  
