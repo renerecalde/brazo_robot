@@ -27,9 +27,9 @@ float rang2=0; // giro de las ruedas sobre su eje, cuando el auto avanza
 float largo_brazo=2;
 float largo_antebrazo=2;
 //Medidas de la base
-float largo_base=0.3;//eje y
-float ancho_base=0.3;//eje z
-float alto_base=0.3;//eje x
+float largo_base=1;//eje y
+float ancho_base=1;//eje z
+float alto_base=1;//eje x
 float angulo=0; //angulo bola
 float distancia=1;  //distancia bola
 float limite_inferior=1;
@@ -764,7 +764,7 @@ void initialize() {
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
   glGenTextures(1, &texid);
   glBindTexture(GL_TEXTURE_2D, texid);
-  mipmap_ppm("pista.ppm");
+  mipmap_ppm("mesapool.ppm");
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

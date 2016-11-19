@@ -297,17 +297,18 @@ void drawObjects() {
     //     Base
 	// La base es una pirame de 0.3x0.3x0.3
     glPushMatrix();
-  		//glTranslatef(0.0,0.0,0.0);//la traslado al inicio de coordenadas.
-        //glRotatef(-90,0,1,0);//roto para que la punta quede para arriba. Me
+	    //Estas son las transformaciones para colocar la base
+  		glTranslatef(0.0,0.0,0.0);//la traslado al inicio de coordenadas.
+        glRotatef(-90,0,1,0);//roto para que la punta quede para arriba. Me
 		//parece que y apunta hacia el observador.
 		//x apunta hacia arriba. Y z hacia la derecha
-        //glScalef(alto_base,largo_base,ancho_base);
-       // drawBase(false);
-	glTranslatef(0.0,0.0,1.0);
-	glRotatef(90,0,1,0);
-	glScalef(1.0,0.3,0.1);
+        glScalef(alto_base,largo_base,ancho_base);
+        drawBase(false);
 	
-		drawChasis(false);
+	//glTranslatef(0.0,0.0,1.0);
+	//glRotatef(90,0,1,0);
+	//glScalef(1.0,0.3,0.1);
+	//drawChasis(false);
     glPopMatrix();
   
     //Qué hace acá?  si desde aca
