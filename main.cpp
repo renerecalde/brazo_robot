@@ -27,6 +27,8 @@ float rang2=0; // giro de las ruedas sobre su eje, cuando el auto avanza
 float largo_brazo=2;
 float largo_antebrazo=2;
 //Medidas de la base
+//A esto me parece que no lo voy a usar
+
 float largo_base=1;//eje y
 float ancho_base=1;//eje z
 float alto_base=1;//eje x
@@ -67,12 +69,16 @@ bool // variables de estado de este programa
   perspectiva=true, // perspectiva u ortogonal
   animado=true,    // el auto se mueve por la pista
   dibuja=true,      // false si esta minimizado
-  relleno=true,     // dibuja relleno o no
   cl_info=true,     // informa por la linea de comandos
   top_view=false,    // vista superior o vista trasera del auto cuando animate=true
   fog=false,
   creado=false,
-  mover=false;
+  mover=false,
+ //Para el dedo	
+  blend=false,      // transparencias
+  wire=false,       // dibuja lineas o no	
+  smooth=true,      // normales por nodo o por plano	
+  relleno=true;     // dibuja relleno o no
    
 // tamaño de la pista sobre
 int text_w = 200; 

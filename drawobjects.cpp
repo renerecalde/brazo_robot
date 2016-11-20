@@ -42,7 +42,14 @@ extern float ang_brazo;
 extern float ang_completo;
 
 extern float ang_brazo_segundo;
-static const double R2G=180/M_PI, DOS_PI=2*M_PI, G2R=atan(1.0)/45;
+static const double PI=4*atan(1.0),R2G=180/M_PI, DOS_PI=2*M_PI, G2R=atan(1.0)/45;
+
+//Pra el antebrazo
+extern bool relleno;
+extern bool wire;
+extern bool blend;
+extern bool smooth;
+
 //==========================================
 
 //===Variables agregadas para este proyecto.
@@ -58,7 +65,7 @@ float co=0;
 //==========================================
 // algunos objetos
 //==========================================
-
+//
 //Base del brazo robot.
 void drawBase(bool alt_color=false){
 	if (alt_color)
@@ -101,48 +108,6 @@ void drawBase(bool alt_color=false){
 	
 }
 
-void drawAnteBrazo(bool alt_color=false) {
-	if (alt_color)
-		glColor3f(.8,.3,.2);
-	else
-			
-		glPushMatrix();
-		
-			glTranslatef(1,0,0);
-			
-			glColor3f(0.75,0.75,0.75);
-			
-			glBegin(GL_QUAD_STRIP);//La envoltura
-			//como hice con strip voy a tener un problema
-			//con las normales mas adelante. En ela cuestion de la iluminación
-			glNormal3f(0,1,0);//n1
-			//Esto define la normal al vertice/s. Es decir 
-			//la normal a la superficie formada por los vertices siguientes. 
-			//Sirve para la iluminación. Y es importante definir.
-			glVertex3f(1,1,-1);//v5
-			glVertex3f(-1,1,-1);//v2
-			glVertex3f(1,1,1);//v6
-			glNormal3f(0,0,1);//n2
-			glVertex3f(-1,1,1);//v3
-			glVertex3f(1,-1,1);//v7
-			glVertex3f(-1,-1,1);//v4
-			glNormal3f(0,1,0);//n3
-			glVertex3f(1,-1,-1);//v8
-			glVertex3f(-1,-1,-1);//v1
-			glEnd();
-			glBegin(GL_QUADS);//La tapa de abajo
-			glNormal3f(-1,0,0);
-			glVertex3f(-1,-1,-1);//v1
-			glVertex3f(-1,1,-1);//v2
-			glVertex3f(-1,1,1);//v3
-			glVertex3f(-1,-1,1);//v4
-			glEnd();
-		
-		glPopMatrix();
-		
-	
-}
-
 
 void drawChasis(bool alt_color=false) {
   if (alt_color)
@@ -153,7 +118,7 @@ void drawChasis(bool alt_color=false) {
     
   glTranslatef(1,0,0);
     
-    glColor3f(1,.5,.3);
+  glColor3f(1,.5,.3);
   glBegin(GL_TRIANGLES);
   glNormal3f(.4,-1,0);
   glVertex3f(-1,-1,-1);
@@ -186,9 +151,36 @@ void drawChasis(bool alt_color=false) {
 }
 
 
+
+
+/*Le puse miembro a cada parte del brazo, puesto que el brazo y el antebrazo 
+igual. No se si está bien, ya que cuando haya que usar los angulos no se como va 
+quedar funcionan*/
+
+void drawMiembro(bool alt_color=false){
+	float radio_base=0.5;
+	float radio_tapa=0.5;
+	float altura=2;
+	float lod=7;//nivel de detalle
+	GLUquadricObj* q;
+
+	//define e inicializa el objeto cuadrico	
+	q= gluNewQuadric();	
+	gluQuadricNormals(q, GLU_SMOOTH);
+	
+	//dibuja el cilindro
+	glPushMatrix();
+		glColor3f(0.75,0.75,0.75);//defino la base en un color gris claro.
+		//glTranslatef(0,0,1);
+		glRotated(90,0,1,0);//Para que quede sobre el eje z.
+		gluCylinder(q,radio_base, radio_tapa, altura,lod, lod);
+	glPopMatrix();
+	
+}
 void drawCasco(int lod) {
   glutSolidSphere(1,lod,lod);
 }
+
 
 void drawCube() {
   glColor3f(1,1,1);
@@ -281,8 +273,8 @@ void drawObjects() {
 //  float co=sin(-rang);
   
   
-  float ca=cos(-ang_brazo);
-  float co=sin(-ang_brazo);
+  float ca=cos(-ang_brazo);//que es esto?
+  float co=sin(-ang_brazo);// Y esto?
   
   
   
@@ -298,16 +290,18 @@ void drawObjects() {
 	// La base es una pirame de 0.3x0.3x0.3
     glPushMatrix();
 	    //Estas son las transformaciones para colocar la base
-  		glTranslatef(0.0,0.0,0.0);//la traslado al inicio de coordenadas.
+  		glTranslatef(0.0,0.0,1.0);//la traslado al inicio de coordenadas. Hay un 
+		//translate tambien cuando se dibuja, en el drawBase. No se si esto esta 
+		//bien
         glRotatef(-90,0,1,0);//roto para que la punta quede para arriba. Me
 		//parece que y apunta hacia el observador.
 		//x apunta hacia arriba. Y z hacia la derecha
-        glScalef(alto_base,largo_base,ancho_base);
-        drawBase(false);
+		glScalef(0.5,0.3,0.3);
+		drawBase(false);
 	
 	//glTranslatef(0.0,0.0,1.0);
 	//glRotatef(90,0,1,0);
-	//glScalef(1.0,0.3,0.1);
+	
 	//drawChasis(false);
     glPopMatrix();
   
@@ -323,22 +317,21 @@ void drawObjects() {
         glTranslatef(0.0,0.0,1.0);
        	glRotatef(ang_brazo,0,1,0);
 		glScalef(1.0,0.3,0.1);
-        //drawAnteBrazo(false);
-		drawChasis(false);
+        drawMiembro();	
 	glPopMatrix();
       
       
     // Ante Brazo
     glPushMatrix();
-        glTranslatef(1.0,0.0,1.0);
-        glTranslatef(ca,0.0,co);
+        glTranslatef(1.0,0.0,1.0);//Porque usa dos traslate?. 
+		glTranslatef(ca,0.0,co);
         glRotatef(ang_brazo_segundo,0,1,0);
-        glScalef(1.0,0.3,0.1);
-        drawChasis(false);
-    glPopMatrix();
+		glScalef(1.0,0.3,0.1);
+		drawMiembro();
+	glPopMatrix();
 	 
 	  
-	glPopMatrix(); ///Esto que hace? si se hace 
+	glPopMatrix(); //Esto que hace? si se hace 
 	  
       
          
