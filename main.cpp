@@ -32,20 +32,23 @@ float largo_antebrazo=2;
 float largo_base=1;//eje y
 float ancho_base=1;//eje z
 float alto_base=1;//eje x
-float angulo=0; //angulo bola
+//angulos distancias para calculos
+float angulo=45; //angulo bola
 float distancia=1;  //distancia bola
 float limite_inferior=1;
 float limite_superior=2;
-float ang_brazo=0;
-float apertura=0;
-float ang_completo=0;
-float ang_brazo_final = 0; 
-float ang_completo_final=0; 
-float avance_ang_completo = 0; 
-float avance_ang_brazo = 0; 
-float ang_brazo_segundo=0;
-float ang_brazo_segundo_final=0;
-float avance_ang_brazo_segundo=0;
+float ang_brazo=10;
+float apertura=10;
+float ang_completo=-10;
+float ang_brazo_final = 10; 
+float ang_completo_final=10; 
+float avance_ang_completo = 10; 
+float avance_ang_brazo = 10; 
+float ang_brazo_segundo=10;
+float ang_brazo_segundo_final=10;
+float avance_ang_brazo_segundo=10;
+float dinnn=0;
+float ang_mano=20;
 
 
 int
@@ -94,7 +97,7 @@ inline short get_modifiers() {return modifiers=(short)glutGetModifiers();}
 
 // temporizador:
 static const int ms_lista[]={1,2,5,10,20,50,100,200,500,1000,2000,5000},ms_n=12;
-static int ms_i=8,msecs=ms_lista[ms_i]; // milisegundos por frame
+static int ms_i=10,msecs=ms_lista[ms_i]; // milisegundos por frame
 //valor inicial ms_i era 4
 
 //!!!!!!!!!!!!!
@@ -420,9 +423,9 @@ void SpecialUp_cb(int key,int xm=0,int ym=0) {
 //Función que devuelve un valor random para que la bola aparezca en algun lugar.
 //A esta función podriamos ponerla en otra clase que contenga todos los cálculos
 //te da un valor, al azar, entre un minimo y un maximo
-int randInRange(int min, int max)
+void randInRange(int min, int max)
 {
-  return min + (int) (rand() / (double) (RAND_MAX + 1) * (max - min + 1));
+	dinnn = min + (int) (rand() / (double) (RAND_MAX + 1) * (max - min + 1));
 }
 
 
@@ -436,11 +439,19 @@ void Keyboard_cb(unsigned char key,int x=0,int y=0) {
       
 		 apertura = sqrt(1+distancia*distancia);
 		
-		 ang_brazo_final = (acos((((largo_brazo * largo_brazo) - (largo_antebrazo * largo_antebrazo) + (apertura * apertura)) / (2 * largo_brazo * apertura ) )))/(M_PI/180); 
-		
-		 ang_completo_final= asin(distancia/apertura)/(M_PI/180);
 		 
-		 ang_brazo_segundo_final=(180-90-ang_brazo);
+		 if((largo_brazo * apertura )!=0 ) ang_brazo_final = (acos((((largo_brazo * largo_brazo) - (largo_antebrazo * largo_antebrazo) + (apertura * apertura)) / (2 * largo_brazo * apertura ) )))/(M_PI/180); 
+		
+		
+		 
+		 if(apertura!=0)ang_completo_final= asin(distancia/apertura)/(M_PI/180);
+		 
+		 float intermedio=ang_completo_final;
+			 
+		 ang_completo_final=90-ang_completo_final-ang_brazo_final;
+		 		 
+		 ang_brazo_segundo_final=-90+(180-90+ang_brazo_final);  ///-intermedio;/// ver!! @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+		 
 		 
 		 
 		 diferencia= aang - angulo;
@@ -455,73 +466,50 @@ void Keyboard_cb(unsigned char key,int x=0,int y=0) {
 		 avance_ang_brazo_segundo=(ang_brazo_segundo_final-ang_brazo_segundo)/diferencia;
 		 
 		 
-		 cout<<setprecision(3)<<fixed<<"distancia:"<<distancia<<" ang_brazo_final:"<<ang_brazo_final<<" apertura:"<<apertura<<" ang_completo_final:"<<ang_completo_final<<"\l"<<flush;
+		 
+		 cout<<setprecision(3)<<fixed<<"distancia:"<<distancia<<" ang_brazo_final:"<<ang_brazo_final<<" apertura:"<<apertura<<" ang_completo_final:"<<ang_completo_final<<endl;
+		/// cout<<setprecision(3)<<fixed<<"aang:"<<aang<<endl;
 		 
 		
+		 
 		if(aang < angulo) {
-			
-			
+				
 			int inicio=aang;
-		
-		
-			
-			for( int aa=inicio ;aa<=angulo   ;aa++  ) {
+					
+			for(int aa=inicio ;aa<=angulo   ;aa++  ) {
 							
 				aang++;
-				ang_brazo+=avance_ang_brazo;
+				ang_brazo+=avance_ang_brazo; ///ver!!!!!
 				ang_completo+=avance_ang_completo;
 				ang_brazo_segundo+=avance_ang_brazo_segundo;
 				
-				regen();
+				//regen();
+				
+			//	cout<<"pasada: "<<aa<<" aang: "<<aang<<endl;
+				
 				glutPostRedisplay();
 						
-				//cout<<" paso "<<flush;
-				
-				
 				for( int aaa=0 ;aaa<=100 ;aaa++  ) {
 					
 					for( int bbb=0 ;bbb<=100 ;bbb++  ) {
 						
 					}
-				
-				
 				}
-				
-				
-				/*
-				
-				if (msecs!=1){ // esperar msec antes de pasar al próximo cuadro, si msecs es 1 no pierdo tiempo
-					int tiempo=glutGet(GLUT_ELAPSED_TIME), lapso=tiempo-anterior;
-					if (lapso<msecs) return;
-					
-					suma+=lapso;
-					if (++counter==100) {
-						//      cout << "<ms/frame>= " << suma/100.0 << endl;
-						counter=suma=0;
-					}
-					anterior=tiempo;
-				}
-				
-				*/
-				
+			
 			}
 			
 		}else {
-			///////////////
 			
 			int inicio=aang;
-			
-			
+						
 			for( int aa=inicio ;aa>=angulo   ;aa--) {
-				
-			
 				
 				aang--;
 				
 				ang_brazo+=avance_ang_brazo;
-				ang_completo+=avance_ang_completo;
-				ang_brazo_segundo+=avance_ang_brazo_segundo;
-				regen();
+			    ang_completo+=avance_ang_completo;
+			    ang_brazo_segundo+=avance_ang_brazo_segundo;
+			//	regen();
 				glutPostRedisplay();
 				
 				//cout<<" paso "<<flush;
@@ -532,15 +520,9 @@ void Keyboard_cb(unsigned char key,int x=0,int y=0) {
 					for( int bbb=0 ;bbb<=100 ;bbb++  ) {
 						
 					}
-					
-					
+								
 				}
-				
-				
-				
-				
-				
-				
+							
 			}
 			
 			//////////////
@@ -555,12 +537,17 @@ void Keyboard_cb(unsigned char key,int x=0,int y=0) {
   case 'b': case 'B': // Insertar la bola 
     
       
-      angulo =randInRange(0,360);
-
-	  distancia=1+randInRange(0,20)/10;
+      randInRange(0,360);
+	  
+	  angulo = dinnn;
+	  
+	  randInRange(0,20);
+	  
+	  distancia=1+dinnn/20;
       
-         
-    if (true) cout << ((creado)? "Creado: " : "No creado: ") << endl;
+	  cout<<setprecision(3)<<fixed<<" distancia: "<<distancia<<" angulo: "<<angulo<<endl;
+	  
+    
     
   
 	  break;	  	
