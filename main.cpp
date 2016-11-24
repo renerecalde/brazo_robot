@@ -33,13 +33,13 @@ float largo_base=1;//eje y
 float ancho_base=1;//eje z
 float alto_base=1;//eje x
 //angulos distancias para calculos
-float angulo=45; //angulo bola
+float angulo=0; //angulo bola
 float distancia=1;  //distancia bola
 float limite_inferior=1;
 float limite_superior=2;
 float ang_brazo=10;
 float apertura=10;
-float ang_completo=-10;
+float ang_completo=0;
 float ang_brazo_final = 10; 
 float ang_completo_final=10; 
 float avance_ang_completo = 10; 
@@ -49,6 +49,9 @@ float ang_brazo_segundo_final=10;
 float avance_ang_brazo_segundo=10;
 float dinnn=0;
 float ang_mano=20;
+
+float aangulo=1;//angulo de rotacion total
+float alfa=0;//angulo dle brazo
 
 
 int
@@ -235,47 +238,50 @@ void regen() {
 // del modelo (lod) y la no aceleracion por hardware lo bajen
 void Idle_cb() {
   static int anterior=glutGet(GLUT_ELAPSED_TIME); // milisegundos desde que arranco
-  
-  if (msecs!=1){ // esperar msec antes de pasar al próximo cuadro, si msecs es 1 no pierdo tiempo
-    int tiempo=glutGet(GLUT_ELAPSED_TIME), lapso=tiempo-anterior;
-    if (lapso<msecs) return;
-    
-    suma+=lapso;
-    if (++counter==100) {
-      //      cout << "<ms/frame>= " << suma/100.0 << endl;
-      counter=suma=0;
-    }
-    
-    
-    
-    anterior=tiempo;
-  } 
-  
+//  
+//  if (msecs!=1){ // esperar msec antes de pasar al próximo cuadro, si msecs es 1 no pierdo tiempo
+//    int tiempo=glutGet(GLUT_ELAPSED_TIME), lapso=tiempo-anterior;
+//    if (lapso<msecs) return;
+//    
+//    suma+=lapso;
+//    if (++counter==100) {
+//      //      cout << "<ms/frame>= " << suma/100.0 << endl;
+//      counter=suma=0;
+//    }
+//    
+//    
+//    
+//    anterior=tiempo;
+//  } 
+  if (keys[2]) aangulo+=1;
+  if (keys[3]) aangulo-=1;
+  if (keys[0]) alfa+=1;
+  if (keys[1]) alfa-=1;
   // aplicar los controles
-  if (keys[2]!=keys[3])
-    rang=(8*rang+(keys[2]?.5:-.5)*float(10*aspeed+60*(topspeed-aspeed))/topspeed)/9;
-  else
-    rang=3*rang/4;
-  if (keys[1]) aacel=-1;
-  else if (keys[0]) aacel=1;
-  else aacel=-.2;
-  // mover el auto
-  aspeed+=aacel*.75-.25;
-  if (aspeed<0) aspeed=0;
-  else if (aspeed>topspeed) aspeed=topspeed;
-  if (animado) {
-    ax+=aspeed*cos(aang*G2R)/100;
-    ay+=aspeed*sin(aang*G2R)/100;
-    // la pista es ciclica
-    if (ax<-text_w) ax+=text_w*2;
-    else if (ax>text_w) ax-=text_w*2;
-    if (ay<-text_h) ay+=text_h*2;
-    else if (ay>text_h) ay-=text_h*2;
-  } else {
-    ax=ay=0;
-  }
-  aang-=rang*aspeed/150;
-  rang2+=aspeed;
+//  if (keys[2]!=keys[3])
+//    aangulo=+angulo;
+//  else
+//    rang=3*rang/4;
+//  if (keys[1]) aacel=-1;
+//  else if (keys[0]) aacel=1;
+//  else aacel=-.2;
+//   mover el auto
+//  aspeed+=aacel*.75-.25;
+//  if (aspeed<0) aspeed=0;
+//  else if (aspeed>topspeed) aspeed=topspeed;
+//  if (animado) {
+//    ax+=aspeed*cos(aang*G2R)/100;
+//    ay+=aspeed*sin(aang*G2R)/100;
+//     la pista es ciclica
+//    if (ax<-text_w) ax+=text_w*2;
+//    else if (ax>text_w) ax-=text_w*2;
+//    if (ay<-text_h) ay+=text_h*2;
+//    else if (ay>text_h) ay-=text_h*2;
+//  } else {
+//    ax=ay=0;
+//  }
+//  aang-=rang*aspeed/150;
+//  rang2+=aspeed;
     
   if (true){
      

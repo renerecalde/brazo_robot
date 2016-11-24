@@ -46,13 +46,15 @@ extern float ang_brazo_segundo;
 static const double PI=4*atan(1.0),R2G=180/M_PI, DOS_PI=2*M_PI, G2R=atan(1.0)/45;
 
 extern float ang_completo_final;
-
+extern float aangulo;//angulo de rotacion final
 
 //Pra el antebrazo
 extern bool relleno;
 extern bool wire;
 extern bool blend;
 extern bool smooth;
+
+extern float alfa;//angulo del brazo
 
 //==========================================
 
@@ -74,6 +76,7 @@ int ver=0;
 //Base del brazo robot.
 void drawBase(bool alt_color=false){
 	if (alt_color)
+		
 		glColor3f(.8,.3,.2);
 	else
 		
@@ -114,46 +117,6 @@ void drawBase(bool alt_color=false){
 }
 
 
-void drawChasis(bool alt_color=false) {
-  if (alt_color)
-    glColor3f(.8,.3,.2);
-  else
-    
-    glPushMatrix();
-    
-  glTranslatef(1,0,0);
-    
-  glColor3f(1,.5,.3);
-  glBegin(GL_TRIANGLES);
-  glNormal3f(.4,-1,0);
-  glVertex3f(-1,-1,-1);
-  glVertex3f(-1,-1,1);
-  glVertex3f(1,0,0);
-  glNormal3f(.4,1,0);
-  glVertex3f(-1,1,-1);
-  glVertex3f(-1,1,1);
-  glVertex3f(1,0,0);
-  glNormal3f(.4,0,1);
-  glVertex3f(-1,1,1);
-  glVertex3f(-1,-1,1);
-  glVertex3f(1,0,0);
-  glNormal3f(.4,0,-1);
-  glVertex3f(-1,1,-1);
-  glVertex3f(-1,-1,-1);
-  glVertex3f(1,0,0);
-  glEnd();
-  glBegin(GL_QUADS);
-  glNormal3f(-1,0,0);
-  glVertex3f(-1,-1,-1);
-  glVertex3f(-1,1,-1);
-  glVertex3f(-1,1,1);
-  glVertex3f(-1,-1,1);
-  glEnd();
-  
-  glPopMatrix();
-  
-  
-}
 
 
 
@@ -163,8 +126,8 @@ igual. No se si está bien, ya que cuando haya que usar los angulos no se como va
 quedar funcionan*/
 
 void drawMiembro(bool alt_color=false){
-	float radio_base=0.5;
-	float radio_tapa=0.5;
+	float radio_base=0.5/6;
+	float radio_tapa=0.5/6;
 	float altura=2;
 	float lod=7;//nivel de detalle
 	GLUquadricObj* q;
@@ -185,7 +148,7 @@ void drawMiembro(bool alt_color=false){
 
 
 
-void drawCasco(int lod) {
+void drawBola(int lod) {
   glutSolidSphere(1,lod,lod);
 }
 
@@ -279,7 +242,7 @@ void drawObjects() {
 	co=sin((ang_completo*(M_PI/180)))*2;
 	ca=cos((ang_completo*(M_PI/180)))*2;
 	
-	cout<<fixed<<" ca:"<<ca<<" co:"<<co<<endl;
+	//cout<<fixed<<" ca:"<<ca<<" co:"<<co<<endl;
   
   
   //float rang=rang*(M_PI/180);
@@ -292,43 +255,35 @@ void drawObjects() {
 	float co=sin(-ang_brazo);// Y esto?
 
 
-
-
-glPushMatrix(); // rota todo inicio
-   glRotatef(180,0,0,1);
- 
- 
- 
- 
- 
- 
-
-  //========= Base
+	//========= Base
 	// La base es una pirame de 0.3x0.3x0.3
-    glPushMatrix();
-    //Estas son las transformaciones para colocar la base
-  		//glTranslatef(0.0,0.0,1.0);
-		
-		glTranslatef(0.0,0.0,0.0);//la traslado al inicio de coordenadas. Hay un 
+	glPushMatrix();
+	//Estas son las transformaciones para colocar la base
+	//glTranslatef(0.0,0.0,1.0);
+	
+	glTranslatef(0.0,0.0,0.0);//la traslado al inicio de coordenadas. Hay un 
 	//translate tambien cuando se dibuja, en el drawBase. No se si esto esta 
 	//bien
 	glRotatef(-90,0,1,0);//roto para que la punta quede para arriba. Me
-	   // glRotatef(90,0,1,0);
-	   // glScalef(1.0,0.3,0.1);
-	   // drawChasis(false);
-		//parece que y apunta hacia el observador.
-		//x apunta hacia arriba. Y z hacia la derecha
-		glScalef(0.5,0.3,0.3);
-		drawBase(false);
+	//parece que y apunta hacia el observador.
+	//x apunta hacia arriba. Y z hacia la derecha
+	glScalef(0.5,0.3,0.3);
+	drawBase(false);
 	
-	//glTranslatef(0.0,0.0,1.0);
-	//glRotatef(90,0,1,0);
+
+	glPopMatrix();
 	
-	//drawChasis(false);
-    glPopMatrix();
+
+glPushMatrix(); // rota todo inicio
+   glRotatef(aangulo,0,0,1);//este rotate se usa para rotar el angulo w
+ 
+ 
+ 
+ 
+ 
+ 
+
   
-    //Qué hace acá?  si desde aca
-	///glPushMatrix();  ///
         		        	
 	//========= Brazo
       
@@ -337,36 +292,46 @@ glPushMatrix(); // rota todo inicio
 	//parece que y apunta hacia el observador.
 	//x apunta hacia la izquierda. Y z hacia la derecha
         glTranslatef(0.0,0.0,1.0);
-				 glRotatef(ang_completo,0,1,0);  
-		glScalef(1.0,0.3,0.1);
+		glRotatef(alfa,0,1,0);  
+//		glPushMatrix();
+//		glScalef(1.0,0.3,0.1);
         drawMiembro();	
+//		glPopMatrix();
+		
+		glTranslatef(2,0,0);
+		glRotatef(-2*(alfa),0,1,0);
+//		glPushMatrix();
+//		glScalef(1.0,0.3,0.1);
+		drawMiembro();
+//		glPopMatrix();
 	glPopMatrix();
       
    //========= Ante Brazo
-    glPushMatrix();
-                 glTranslatef(ca,0.0,-co+1);  // correcto  glTranslatef(ca,0.0,-co+1);  
-
-       glRotatef(ang_brazo_segundo,0,1,0);
-		glScalef(1.0,0.3,0.1);
-		drawMiembro();
-	glPopMatrix();
+//    glPushMatrix();
+//        //glTranslatef(ca,0.0,-co+1);  // correcto  glTranslatef(ca,0.0,-co+1);  
+//		glTranslatef(2,0,1);
+//        //glRotatef(ang_brazo_segundo,0,1,0);
+//		glRotatef(ang_completo,0,1,0);  
+//		glScalef(1.0,0.3,0.1);
+//		drawMiembro();
+//	glPopMatrix();
 
 	
 	//========= Mano
 	/*La mano se conformaria por dos miembros con un angulo de apertura de 45º 
 	entre ellos.*/
-	glPushMatrix();
-	 /*Mano*/
-		//dibujo un dedo, roto un angulo apert_mano y dibujo el otro dedo.
-		glTranslatef(4.0,0.0,1);
-		glRotatef(90,0,1,0);
-		glScalef(0.2,0.1,0.1);
-		drawMiembro();
-		glRotatef(ang_mano,0,1,0);
-		drawMiembro();
-	glPopMatrix();
+//	glPushMatrix();
+//	 /*Mano*/
+//		//dibujo un dedo, roto un angulo apert_mano y dibujo el otro dedo.
+//		glTranslatef(4.0,0.0,1);
+//		glRotatef(90,0,1,0);
+//		glScalef(0.2,0.1,0.1);
+//		//drawMiembro();
+//		glRotatef(ang_mano,0,1,0);
+//		//drawMiembro();
+//	glPopMatrix();
 	  
-	///glPopMatrix(); ///Esto que hace? si se hace 
+	//glPopMatrix(); //Esto que hace? si se hace 
 	  
       
          
@@ -375,12 +340,11 @@ glPopMatrix(); //rota todo fin
 	//========= Bola
 	glPushMatrix();
 	   
-	   /// glRotatef(angulo,0,0,1);
-	    glRotatef(180,0,0,1);
-	    glTranslatef(distancia,0.0,0.0);
+	    glRotatef(angulo,0,0,1);//Este angulo es el angulo w
+	    glTranslatef(distancia,0.0,0.0);//distancia es h
 	    glTranslatef(0.0,0.5,0.0);
 		glScalef(0.1,0.1,0.1);
-        drawCasco(lod);
+        drawBola(lod);
 
 	glPopMatrix();
   
