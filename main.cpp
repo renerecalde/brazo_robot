@@ -1,4 +1,3 @@
-// Transformaciones (buscar @@@@@ y ver consignas.pdf)
 
 #include <cmath> // atan sqrt
 #include <cstdlib> // exit
@@ -50,8 +49,12 @@ float avance_ang_brazo_segundo=10;
 float dinnn=0;
 float ang_mano=20;
 
+float apertura_mano=1;
+
 float aangulo=1;//angulo de rotacion total
 float alfa=0;//angulo dle brazo
+
+
 
 
 int
@@ -100,7 +103,7 @@ inline short get_modifiers() {return modifiers=(short)glutGetModifiers();}
 
 // temporizador:
 static const int ms_lista[]={1,2,5,10,20,50,100,200,500,1000,2000,5000},ms_n=12;
-static int ms_i=10,msecs=ms_lista[ms_i]; // milisegundos por frame
+static int ms_i=2,msecs=ms_lista[ms_i]; // milisegundos por frame
 //valor inicial ms_i era 4
 
 //!!!!!!!!!!!!!
@@ -153,27 +156,17 @@ void Display_cb() { // Este tiene que estar
   glLightfv(GL_LIGHT0,GL_POSITION,lpos);  // ubica la luz
   if (animado) {
     if (top_view) 
-   //   gluLookAt(ax,ay,15,ax,ay,0,0,1,0);
-    
-    gluLookAt(0,8,8,0,0,0,0,1,0);
-  
-      
+         gluLookAt(0,8,8,0,0,0,0,1,0);
+       
     else {
-      // @@@@@ Ubicar correctamente la camara con gluLookAt, (y ver qué pasa con la luz cuando el auto se meuve)
    
-     // gluLookAt(ax,ay,15,ax,ay,0,0,1,0);
-      ////
-    // gluLookAt(target[0]-0.1,target[1],target[2]+0.1,target[0],target[1],target[2],up[0],up[1],up[2]);
-      ////
-  //   gluLookAt(ax-dist_cam*cos(-aang*M_PI/180),ay-dist_cam*sin(-aang*M_PI/180),2,ax,ay,0,0,0,1);
-   
-      gluLookAt(0,8,4,0,0,0,0,0,1);
+         gluLookAt(0,8,4,0,0,0,0,0,1);
       
    }
   } else {
-    gluLookAt(0,2,2,0,0,0,0,1,0);
-   // gluLookAt(dist_cam*eye[0],dist_cam*eye[1],dist_cam*eye[2],0,0,0,up[0],up[1],up[2]);
-   // gluLookAt(ax,ay,15,ax,ay,0,0,1,0);
+    
+	     gluLookAt(0,2,2,0,0,0,0,1,0);
+   
   }
   
   drawObjects();
@@ -237,64 +230,66 @@ void regen() {
 // El "framerate" lo determina msec, a menos que la complejidad 
 // del modelo (lod) y la no aceleracion por hardware lo bajen
 void Idle_cb() {
-  static int anterior=glutGet(GLUT_ELAPSED_TIME); // milisegundos desde que arranco
-//  
-//  if (msecs!=1){ // esperar msec antes de pasar al próximo cuadro, si msecs es 1 no pierdo tiempo
-//    int tiempo=glutGet(GLUT_ELAPSED_TIME), lapso=tiempo-anterior;
-//    if (lapso<msecs) return;
-//    
-//    suma+=lapso;
-//    if (++counter==100) {
-//      //      cout << "<ms/frame>= " << suma/100.0 << endl;
-//      counter=suma=0;
-//    }
-//    
-//    
-//    
-//    anterior=tiempo;
-//  } 
+	static int anterior=glutGet(GLUT_ELAPSED_TIME); // milisegundos desde que arranco
+	
+	if (msecs!=1){ // esperar msec antes de pasar al próximo cuadro, si msecs es 1 no pierdo tiempo
+		int tiempo=glutGet(GLUT_ELAPSED_TIME), lapso=tiempo-anterior;
+		if (lapso<msecs) return;
+		
+		suma+=lapso;
+		if (++counter==100) {
+			      cout << "<ms/frame>= " << suma/100.0 << endl;
+			counter=suma=0;
+		}
+		
+		
+		
+		anterior=tiempo;
+	} 
+	
+	// aplicar los controles
+	if (keys[2]!=keys[3])
+		rang=(8*rang+(keys[2]?.5:-.5)*float(10*aspeed+60*(topspeed-aspeed))/topspeed)/9;
+	else
+		rang=3*rang/4;
+	if (keys[1]) aacel=-1;
+	else if (keys[0]) aacel=1;
+	else aacel=-.2;
+	// mover el auto
+	aspeed+=aacel*.75-.25;
+	if (aspeed<0) aspeed=0;
+	else if (aspeed>topspeed) aspeed=topspeed;
+	if (animado) {
+		ax+=aspeed*cos(aang*G2R)/100;
+		ay+=aspeed*sin(aang*G2R)/100;
+		// la pista es ciclica
+		if (ax<-text_w) ax+=text_w*2;
+		else if (ax>text_w) ax-=text_w*2;
+		if (ay<-text_h) ay+=text_h*2;
+		else if (ay>text_h) ay-=text_h*2;
+	} else {
+		ax=ay=0;
+	}
+	aang-=rang*aspeed/150;
+	rang2+=aspeed;
+	
+	if (true){
+		
+		//   cout<<setprecision(3)<<fixed<<"x:"<<ax<<" y:"<<ay<<" rang:"<<rang<<" rang2:"<<rang2<<" aspeed:"<<aspeed<<" Coseno -rang: "<<cos(-rang)<<" Seno -rang: "<<sin(-rang)<<"\r"<<flush;
+		
+		cout<<setprecision(3)<<fixed<<" Angulo: "<<angulo<<"\r"<<flush;
+		
+	}
+	
+	
+	
+	
   if (keys[2]) aangulo+=1;
   if (keys[3]) aangulo-=1;
   if (keys[0]) alfa+=1;
   if (keys[1]) alfa-=1;
-  // aplicar los controles
-//  if (keys[2]!=keys[3])
-//    aangulo=+angulo;
-//  else
-//    rang=3*rang/4;
-//  if (keys[1]) aacel=-1;
-//  else if (keys[0]) aacel=1;
-//  else aacel=-.2;
-//   mover el auto
-//  aspeed+=aacel*.75-.25;
-//  if (aspeed<0) aspeed=0;
-//  else if (aspeed>topspeed) aspeed=topspeed;
-//  if (animado) {
-//    ax+=aspeed*cos(aang*G2R)/100;
-//    ay+=aspeed*sin(aang*G2R)/100;
-//     la pista es ciclica
-//    if (ax<-text_w) ax+=text_w*2;
-//    else if (ax>text_w) ax-=text_w*2;
-//    if (ay<-text_h) ay+=text_h*2;
-//    else if (ay>text_h) ay-=text_h*2;
-//  } else {
-//    ax=ay=0;
-//  }
-//  aang-=rang*aspeed/150;
-//  rang2+=aspeed;
-    
-  if (true){
-     
- //   cout<<setprecision(3)<<fixed<<"x:"<<ax<<" y:"<<ay<<" rang:"<<rang<<" rang2:"<<rang2<<" aspeed:"<<aspeed<<" Coseno -rang: "<<cos(-rang)<<" Seno -rang: "<<sin(-rang)<<"\r"<<flush;
-    
-   // cout<<setprecision(3)<<fixed<<" Angulo: "<<angulo<<"\r"<<flush;
-   
-  }
     
   Display_cb(); // redibuja
-  
- // cout<<" pasonnnnnnnnn "<<flush;
-  
   glutPostRedisplay();
 }
 
@@ -439,9 +434,8 @@ void randInRange(int min, int max)
 void Keyboard_cb(unsigned char key,int x=0,int y=0) {
   switch (key){
   case 'a': case 'A':// Agarrar la bola.
-	//animado=!animado;
-    //mover=!mover;
-    if (true) {
+
+	if (true) {
       
 		 apertura = sqrt(1+distancia*distancia);
 		
@@ -478,20 +472,21 @@ void Keyboard_cb(unsigned char key,int x=0,int y=0) {
 		 
 		
 		 
-		if(aang < angulo) {
+		if(aangulo < angulo) {
 				
-			int inicio=aang;
+			int inicio=aangulo;
 					
 			for(int aa=inicio ;aa<=angulo   ;aa++  ) {
 							
-				aang++;
+				aangulo++;
 				ang_brazo+=avance_ang_brazo; ///ver!!!!!
 				ang_completo+=avance_ang_completo;
 				ang_brazo_segundo+=avance_ang_brazo_segundo;
 				
 				//regen();
 				
-			//	cout<<"pasada: "<<aa<<" aang: "<<aang<<endl;
+				cout<<"aangulo"<<aangulo<<"angulo" << angulo<<endl;
+			
 				
 				glutPostRedisplay();
 						
@@ -504,13 +499,21 @@ void Keyboard_cb(unsigned char key,int x=0,int y=0) {
 			
 			}
 			
+			
+			aangulo=angulo;
+			
+			cout<<"aangulo paasdo"<<aangulo<<"angulo" << angulo<<endl;
+			
+			glutPostRedisplay();
+			
+			
 		}else {
 			
-			int inicio=aang;
+			int inicio=aangulo;
 						
 			for( int aa=inicio ;aa>=angulo   ;aa--) {
 				
-				aang--;
+				aangulo--;
 				
 				ang_brazo+=avance_ang_brazo;
 			    ang_completo+=avance_ang_completo;
@@ -518,7 +521,7 @@ void Keyboard_cb(unsigned char key,int x=0,int y=0) {
 			//	regen();
 				glutPostRedisplay();
 				
-				//cout<<" paso "<<flush;
+				
 	
 				
 				for( int aaa=0 ;aaa<=100 ;aaa++  ) {
@@ -530,6 +533,14 @@ void Keyboard_cb(unsigned char key,int x=0,int y=0) {
 				}
 							
 			}
+			
+			aangulo=angulo;
+		
+			
+			cout<<"aangulo paasdo"<<aangulo<<"angulo" << angulo<<endl;
+			
+			glutPostRedisplay();
+			
 			
 			//////////////
 		}
@@ -552,10 +563,7 @@ void Keyboard_cb(unsigned char key,int x=0,int y=0) {
 	  distancia=1+dinnn/20;
       
 	  cout<<setprecision(3)<<fixed<<" distancia: "<<distancia<<" angulo: "<<angulo<<endl;
-	  
-    
-    
-  
+	    
 	  break;	  	
   case 'c': case 'C': // Tirar la bola
 	  
@@ -597,6 +605,18 @@ void Keyboard_cb(unsigned char key,int x=0,int y=0) {
     if (fog) glEnable (GL_FOG); else glDisable(GL_FOG);
     if (cl_info) cout << ((fog)? "Con Niebla" : "Sin Niebla") << endl;
     break;
+  case 'q': case 'Q':  // apertura mano
+	  apertura_mano-=0.1;
+	  if (apertura_mano<0){
+		  apertura_mano=0;
+	  }
+	  break;
+  case 'w': case 'W':  // apertura mano
+	  apertura_mano+=0.1;
+	  if (apertura_mano>1){
+		  apertura_mano=1;
+	  }
+	  break;	  
   case 27: // escape => exit
     get_modifiers();
     if (!modifiers)

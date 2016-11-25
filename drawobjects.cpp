@@ -55,7 +55,7 @@ extern bool blend;
 extern bool smooth;
 
 extern float alfa;//angulo del brazo
-
+extern float apertura_mano;//distancia entre dedos
 //==========================================
 
 //===Variables agregadas para este proyecto.
@@ -132,6 +132,8 @@ void drawMiembro(bool alt_color=false){
 	float lod=7;//nivel de detalle
 	GLUquadricObj* q;
 
+	
+	
 	//define e inicializa el objeto cuadrico	
 	q= gluNewQuadric();	
 	gluQuadricNormals(q, GLU_SMOOTH);
@@ -144,12 +146,42 @@ void drawMiembro(bool alt_color=false){
 		gluCylinder(q,radio_base, radio_tapa, altura,lod, lod);
 	glPopMatrix();
 	
+}//end drawMiembro
+
+
+void drawMano(bool alt_color=false){
+	float radio_base=0.5/6;
+	float radio_tapa=0.5/6;
+	float altura=1;
+	float lod=7;//nivel de detalle
+	GLUquadricObj* q;
+	
+	
+	
+	//define e inicializa el objeto cuadrico	
+	q= gluNewQuadric();	
+	gluQuadricNormals(q, GLU_SMOOTH);
+	
+	//dibujo el cilindro
+	glPushMatrix();
+		glColor3f(1,0,0);//defino la base en un color gris claro.
+		glTranslatef(0,0,-0.5);
+		
+		gluCylinder(q,radio_base, radio_tapa, altura,lod, lod);//dibujo mano
+		
+		glRotatef(90,0,1,0);
+		gluCylinder(q,radio_base, radio_tapa, altura/2, lod, lod);//dibujo dedo 1
+		glTranslatef(-apertura_mano,0,0);
+		gluCylinder(q,radio_base, radio_tapa, altura/2, lod, lod);//dibujo dedo 2
+	glPopMatrix();
+	
+	
 }
 
 
 
 void drawBola(int lod) {
-  glutSolidSphere(1,lod,lod);
+  glutSolidSphere(3,lod,lod);
 }
 
 
@@ -212,141 +244,59 @@ void drawObjects() {
 	drawPista();
 	drawPlanito();
 	drawCube();
-        
-  if(contt==0)  {
-    
-     contt++;
-    
-  }else{
-    original=original-rang;
-    ver=1;
-  }
-    
-    ca=1;
-    co=1;
-    
-	/*
-  if(ang_completo < 45)  {  // no menor o igual, para no hacer angulo cero 
-	  
-	   ca=cos(-((-ang_completo*(M_PI/180))-(45*(M_PI/180))))*2;
-	   co=sin(-((-ang_completo*(M_PI/180))-(45*(M_PI/180))))*2;
-	 
-  }else{
-	  
-	  ca=cos((-ang_completo*(M_PI/180))-(45*(M_PI/180)))*2;
-	  co=sin((-ang_completo*(M_PI/180))-(45*(M_PI/180)))*2;
-
-  }
-  */
-		
-	co=sin((ang_completo*(M_PI/180)))*2;
-	ca=cos((ang_completo*(M_PI/180)))*2;
-	
-	//cout<<fixed<<" ca:"<<ca<<" co:"<<co<<endl;
   
-  
-  //float rang=rang*(M_PI/180);
-   
-//  float ca=cos(-rang);
-//  float co=sin(-rang);
-  
-  
-	float ca=cos(-ang_brazo);//que es esto?
-	float co=sin(-ang_brazo);// Y esto?
-
-
 	//========= Base
 	// La base es una pirame de 0.3x0.3x0.3
 	glPushMatrix();
-	//Estas son las transformaciones para colocar la base
-	//glTranslatef(0.0,0.0,1.0);
-	
-	glTranslatef(0.0,0.0,0.0);//la traslado al inicio de coordenadas. Hay un 
-	//translate tambien cuando se dibuja, en el drawBase. No se si esto esta 
-	//bien
-	glRotatef(-90,0,1,0);//roto para que la punta quede para arriba. Me
-	//parece que y apunta hacia el observador.
-	//x apunta hacia arriba. Y z hacia la derecha
-	glScalef(0.5,0.3,0.3);
-	drawBase(false);
-	
-
+	      //Estas son las transformaciones para colocar la base
+	      //glTranslatef(0.0,0.0,1.0);
+	      glTranslatef(0.0,0.0,0.0);//la traslado al inicio de coordenadas. Hay un 
+		  //translate tambien cuando se dibuja, en el drawBase. No se si esto esta 
+	      //bien
+	      glRotatef(-90,0,1,0);//roto para que la punta quede para arriba. Me
+	 	  //parece que y apunta hacia el observador.
+	      //x apunta hacia arriba. Y z hacia la derecha
+	      glScalef(0.5,0.3,0.3);
+	      drawBase(false);
 	glPopMatrix();
+
+	//aca tengo z apuntando hacia arriba
 	
-
-glPushMatrix(); // rota todo inicio
-   glRotatef(aangulo,0,0,1);//este rotate se usa para rotar el angulo w
- 
- 
- 
- 
- 
- 
-
+    glPushMatrix(); // rota todo inicio
+    
+	    glRotatef(aangulo,0,0,1);//este rotate se usa para rotar el angulo w
+	    //Acá z sigue apuntando para arriba
+		 //========= Brazo y Antebrazo
+      
+          glPushMatrix();
+	              //parece que y apunta hacia el observador.
+	              //x apunta hacia la izquierda. Y z hacia la derecha
+				 glTranslatef(0.0,0.0,1.0);
+		         glRotatef(alfa,0,1,0);  
+                 drawMiembro();	
+				 
+				//====dibujo ante brazo	
+		         glTranslatef(2,0,0);
+		         glRotatef(-2*(alfa),0,1,0);
+		         drawMiembro();
+				 
+				 //===dibujo la mano
+				 glTranslatef(2,0,0);
+				 drawMano();
+	      glPopMatrix();
+        
+    glPopMatrix(); //rota todo fin
   
-        		        	
-	//========= Brazo
-      
-      
-    glPushMatrix();
-	//parece que y apunta hacia el observador.
-	//x apunta hacia la izquierda. Y z hacia la derecha
-        glTranslatef(0.0,0.0,1.0);
-		glRotatef(alfa,0,1,0);  
-//		glPushMatrix();
-//		glScalef(1.0,0.3,0.1);
-        drawMiembro();	
-//		glPopMatrix();
-		
-		glTranslatef(2,0,0);
-		glRotatef(-2*(alfa),0,1,0);
-//		glPushMatrix();
-//		glScalef(1.0,0.3,0.1);
-		drawMiembro();
-//		glPopMatrix();
-	glPopMatrix();
-      
-   //========= Ante Brazo
-//    glPushMatrix();
-//        //glTranslatef(ca,0.0,-co+1);  // correcto  glTranslatef(ca,0.0,-co+1);  
-//		glTranslatef(2,0,1);
-//        //glRotatef(ang_brazo_segundo,0,1,0);
-//		glRotatef(ang_completo,0,1,0);  
-//		glScalef(1.0,0.3,0.1);
-//		drawMiembro();
-//	glPopMatrix();
+        //========= Bola
+					
+        glPushMatrix();
+		     glRotatef(angulo,0,0,1);//Este angulo es el angulo w
+		     glTranslatef(distancia,0.0,0.0);//distancia es h
+			 glTranslatef(0.0,0.5,0.0);
+			 glScalef(0.1,0.1,0.1);
+             drawBola(lod);
 
-	
-	//========= Mano
-	/*La mano se conformaria por dos miembros con un angulo de apertura de 45º 
-	entre ellos.*/
-//	glPushMatrix();
-//	 /*Mano*/
-//		//dibujo un dedo, roto un angulo apert_mano y dibujo el otro dedo.
-//		glTranslatef(4.0,0.0,1);
-//		glRotatef(90,0,1,0);
-//		glScalef(0.2,0.1,0.1);
-//		//drawMiembro();
-//		glRotatef(ang_mano,0,1,0);
-//		//drawMiembro();
-//	glPopMatrix();
-	  
-	//glPopMatrix(); //Esto que hace? si se hace 
-	  
-      
-         
-glPopMatrix(); //rota todo fin
-  
-	//========= Bola
-	glPushMatrix();
-	   
-	    glRotatef(angulo,0,0,1);//Este angulo es el angulo w
-	    glTranslatef(distancia,0.0,0.0);//distancia es h
-	    glTranslatef(0.0,0.5,0.0);
-		glScalef(0.1,0.1,0.1);
-        drawBola(lod);
-
-	glPopMatrix();
+        glPopMatrix();
   
   
   
